@@ -1,0 +1,16 @@
+{
+  "name": "envkit",
+  "version": "0.1.0",
+  "description": "Zero-dependency .env loader, validator, and variable expander for Node.js",
+  "main": "lib/index.js",
+  "bin": {
+    "envkit": "./bin/envkit.js"
+  },
+  "type": "module",
+  "scripts": {
+    "test": "node --test test/"
+  },
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {}
+}
