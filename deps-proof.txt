@@ -1,0 +1,8 @@
+echo "=== package.json dependencies ===" > deps-proof.txt
+cat package.json >> deps-proof.txt
+echo "" >> deps-proof.txt
+echo "=== npm ls output ===" >> deps-proof.txt
+npm ls >> deps-proof.txt 2>&1
+echo "" >> deps-proof.txt
+echo "=== node_modules check ===" >> deps-proof.txt
+ls node_modules 2>&1 >> deps-proof.txt || echo "node_modules does not exist" >> deps-proof.txt
