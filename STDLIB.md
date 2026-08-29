@@ -35,3 +35,8 @@ Handles: required fields, default values, type checking (string/number/boolean/e
 
 ## child_process spawning for `envkit run`
 This uses Node's built-in `child_process.spawn` — technically part of the stdlib already, called out here for completeness since it's the mechanism behind the `run` subcommand.
+
+## .env vs .env.example diffing → lib/diff.js
+**Normally:** No single standard package for this — often hand-rolled in CI scripts, or via tools like `dotenv-linter`.
+**Instead:** Simple `Set` comparison between two parsed key lists using built-in `Array.filter()` and `Set.has()`.
+Helps catch config drift — someone updates `.env.example` with a new required key but forgets to tell teammates.

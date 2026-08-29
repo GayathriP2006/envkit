@@ -5,9 +5,25 @@ import { spawn } from 'node:child_process';
 import { parseEnv } from '../lib/parser.js';
 import { expandVars } from '../lib/expand.js';
 import { validateSchema } from '../lib/validate.js';
+import { diffEnv } from '../lib/diff.js';
 import { color } from '../lib/output.js';
 
 const [, , command, ...rest] = process.argv;
+
+const HELP_TEXT = `envkit — zero-dependency .env toolkit
+
+Usage:
+  envkit init             Create a starter .env.schema.json
+  envkit check            Validate your .env file against the schema
+  envkit run -- <cmd>     Validate, then run a command with the env loaded
+  envkit diff             Compare .env against .env.example, flag mismatches
+  envkit --help           Show this help text
+
+Examples:
+  envkit check
+  envkit run -- node app.js
+  envkit diff
+`;
 
 function loadEnvAndSchema() {
   const envPath = path.resolve('.env');
@@ -47,6 +63,10 @@ if (command === 'check') {
   }
   const sepIndex = rest.indexOf('--');
   const cmdArgs = sepIndex !== -1 ? rest.slice(sepIndex + 1) : rest;
+  if (cmdArgs.length === 0) {
+    console.error(color('No command given. Usage: envkit run -- <command>', 'red'));
+    process.exit(1);
+  }
   const child = spawn(cmdArgs[0], cmdArgs.slice(1), {
     stdio: 'inherit',
     env: { ...process.env, ...result.values }
@@ -66,12 +86,42 @@ if (command === 'check') {
     console.log(color('Created .env.schema.json', 'green'));
   }
 
-} else {
-  console.log(`envkit — zero-dependency .env toolkit
+} else if (command === 'diff') {
+  const envPath = path.resolve('.env');
+  const examplePath = path.resolve('.env.example');
 
-Usage:
-  envkit init             Create a starter .env.schema.json
-  envkit check            Validate your .env file
-  envkit run -- <cmd>     Validate, then run a command with the env loaded
-`);
+  if (!fs.existsSync(envPath)) {
+    console.error(color('No .env file found.', 'red'));
+    process.exit(1);
+  }
+  if (!fs.existsSync(examplePath)) {
+    console.error(color('No .env.example file found. Create one to diff against.', 'red'));
+    process.exit(1);
+  }
+
+  const actual = parseEnv(fs.readFileSync(envPath, 'utf8'));
+  const example = parseEnv(fs.readFileSync(examplePath, 'utf8'));
+  const result = diffEnv(Object.keys(actual), Object.keys(example));
+
+  if (result.inSync) {
+    console.log(color('✔ .env matches .env.example — no missing or extra keys', 'green'));
+  } else {
+    if (result.missing.length > 0) {
+      console.log(color('✘ Missing keys (in .env.example, not in .env):', 'red'));
+      result.missing.forEach(k => console.log(color(`  - ${k}`, 'yellow')));
+    }
+    if (result.extra.length > 0) {
+      console.log(color('⚠ Extra keys (in .env, not in .env.example):', 'yellow'));
+      result.extra.forEach(k => console.log(color(`  - ${k}`, 'cyan')));
+    }
+    process.exit(1);
+  }
+
+} else if (command === '--help' || command === '-h' || !command) {
+  console.log(HELP_TEXT);
+
+} else {
+  console.log(color(`Unknown command: ${command}`, 'red'));
+  console.log(HELP_TEXT);
+  process.exit(1);
 }

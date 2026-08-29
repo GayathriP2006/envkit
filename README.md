@@ -57,6 +57,14 @@ $ node bin/envkit.js check
 ✔ .env is valid
 ```
 
+
+### Checking for config drift
+
+```bash
+envkit diff
+```
+Compares your `.env` against `.env.example` and flags any keys that are missing or extra — useful for catching config drift when teammates add new required variables.
+
 ## Zero-Dependency Proof
 
 See `deps-proof.txt` for `package.json`, `npm ls` output, and confirmation that `node_modules` contains nothing. See `STDLIB.md` for exactly which package we replaced with which Node.js stdlib module, and why.
