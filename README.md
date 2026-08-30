@@ -2,6 +2,10 @@
 
 A zero-dependency replacement for `dotenv` + `dotenv-expand` + schema validation (`zod`/`envalid`) — built entirely on Node.js's standard library. No `npm install` required, ever.
 
+# envkit
+
+![Tests](https://github.com/GayathriP2006/envkit/actions/workflows/test.yml/badge.svg)
+
 ## The Problem
 
 Every Node.js project that uses `.env` files typically installs 3+ separate packages:
@@ -57,6 +61,17 @@ $ node bin/envkit.js check
 ✔ .env is valid
 ```
 
+### Fallback values in expansion
+
+HOST=${HOST:-localhost}
+If `HOST` isn't set elsewhere, this resolves to `localhost`.
+
+### Strict drift checking
+
+```bash
+envkit diff --strict
+```
+Same as `envkit diff`, but also fails (non-zero exit code) if `.env` contains keys not present in `.env.example` — useful in CI to enforce that `.env.example` stays the single source of truth.
 
 ### Checking for config drift
 

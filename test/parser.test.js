@@ -83,3 +83,23 @@ test('double-quoted values expand \\n into real newline', () => {
   const result = parseEnv('KEY="expand\\nnewlines"');
   assert.strictEqual(result.KEY, 'expand\nnewlines');
 });
+test('handles multiline double-quoted value', () => {
+  const input = 'CERT="-----BEGIN CERT-----\nMIIBIjANBg\n-----END CERT-----"';
+  const result = parseEnv(input);
+  assert.strictEqual(
+    result.CERT,
+    '-----BEGIN CERT-----\nMIIBIjANBg\n-----END CERT-----'
+  );
+});
+
+test('multiline value followed by another key still parses correctly', () => {
+  const input = 'CERT="line1\nline2"\nPORT=3000';
+  const result = parseEnv(input);
+  assert.strictEqual(result.CERT, 'line1\nline2');
+  assert.strictEqual(result.PORT, '3000');
+});
+
+test('throws on unterminated multiline value', () => {
+  const input = 'CERT="line1\nline2';
+  assert.throws(() => parseEnv(input), /unterminated multiline value/);
+});

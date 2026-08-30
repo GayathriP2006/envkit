@@ -15,6 +15,11 @@ Handles: comments, blank lines, quoted values (single/double), escaped `\n` insi
 Handles: nested/chained variable references, circular reference detection (throws a clear error instead of infinite looping).
 **Known limits:** Does not support default-value syntax some tools allow, like `${VAR:-default}`.
 
+
+## Variable expansion default syntax (${VAR:-default})
+**Normally:** Only some expansion libraries support this bash-style fallback syntax.
+**Instead:** Extended our regex in `lib/expand.js` to capture an optional `:-default` suffix, falling back to it when the referenced variable is undefined.
+
 ## zod / envalid / joi → lib/validate.js
 **Normally:** `npm install zod` (or envalid, or joi)
 **Instead:** A small hand-rolled schema engine using `typeof`, `Number.isNaN`, the built-in `URL` constructor for URL validation, and array `.includes()` for enum checks.

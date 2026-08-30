@@ -33,3 +33,17 @@ test('replaces unknown reference with empty string', () => {
   const result = expandVars({ URL: '${UNKNOWN}/path' });
   assert.strictEqual(result.URL, '/path');
 });
+test('uses default value when variable is undefined', () => {
+  const result = expandVars({ URL: '${HOST:-localhost}/api' });
+  assert.strictEqual(result.URL, 'localhost/api');
+});
+
+test('uses actual value over default when variable is defined', () => {
+  const result = expandVars({ HOST: 'example.com', URL: '${HOST:-localhost}/api' });
+  assert.strictEqual(result.URL, 'example.com/api');
+});
+
+test('empty default value resolves to empty string', () => {
+  const result = expandVars({ URL: '${MISSING:-}/api' });
+  assert.strictEqual(result.URL, '/api');
+});

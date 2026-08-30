@@ -9,7 +9,6 @@ import { diffEnv } from '../lib/diff.js';
 import { color } from '../lib/output.js';
 
 const [, , command, ...rest] = process.argv;
-
 const HELP_TEXT = `envkit — zero-dependency .env toolkit
 
 Usage:
@@ -17,12 +16,13 @@ Usage:
   envkit check            Validate your .env file against the schema
   envkit run -- <cmd>     Validate, then run a command with the env loaded
   envkit diff             Compare .env against .env.example, flag mismatches
+  envkit diff --strict    Same as diff, but exits with error on extra keys too
   envkit --help           Show this help text
 
 Examples:
   envkit check
   envkit run -- node app.js
-  envkit diff
+  envkit diff --strict
 `;
 
 function loadEnvAndSchema() {
@@ -87,6 +87,7 @@ if (command === 'check') {
   }
 
 } else if (command === 'diff') {
+  const strict = rest.includes('--strict');
   const envPath = path.resolve('.env');
   const examplePath = path.resolve('.env.example');
 
@@ -103,21 +104,31 @@ if (command === 'check') {
   const example = parseEnv(fs.readFileSync(examplePath, 'utf8'));
   const result = diffEnv(Object.keys(actual), Object.keys(example));
 
-  if (result.inSync) {
-    console.log(color('✔ .env matches .env.example — no missing or extra keys', 'green'));
-  } else {
-    if (result.missing.length > 0) {
-      console.log(color('✘ Missing keys (in .env.example, not in .env):', 'red'));
-      result.missing.forEach(k => console.log(color(`  - ${k}`, 'yellow')));
-    }
-    if (result.extra.length > 0) {
-      console.log(color('⚠ Extra keys (in .env, not in .env.example):', 'yellow'));
-      result.extra.forEach(k => console.log(color(`  - ${k}`, 'cyan')));
-    }
-    process.exit(1);
+  console.log(color(`envkit diff — ${result.summary}`, result.inSync ? 'green' : 'yellow'));
+  console.log('');
+
+  if (result.missing.length > 0) {
+    console.log(color('Missing (required by .env.example, not set in .env):', 'red'));
+    result.missing.forEach(k => console.log(color(`  ✘ ${k}`, 'red')));
+    console.log('');
   }
 
-} else if (command === '--help' || command === '-h' || !command) {
+  if (result.extra.length > 0) {
+    const label = strict
+      ? color('Extra (flagged as errors in --strict mode):', 'red')
+      : color('Extra (in .env, not in .env.example):', 'cyan');
+    console.log(label);
+    result.extra.forEach(k => console.log(color(`  ${strict ? '✘' : '+'} ${k}`, strict ? 'red' : 'cyan')));
+    console.log('');
+  }
+
+  if (result.inSync) {
+    process.exit(0);
+  } else if (result.missing.length > 0 || (strict && result.extra.length > 0)) {
+    process.exit(1);
+  } else {
+    process.exit(0);
+  } }else if (command === '--help' || command === '-h' || !command) {
   console.log(HELP_TEXT);
 
 } else {
