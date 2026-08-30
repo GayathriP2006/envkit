@@ -69,6 +69,18 @@ Compares your `.env` against `.env.example` and flags any keys that are missing 
 
 See `deps-proof.txt` for `package.json`, `npm ls` output, and confirmation that `node_modules` contains nothing. See `STDLIB.md` for exactly which package we replaced with which Node.js stdlib module, and why.
 
+## The Trust Comparison
+
+Installing the equivalent tools the normal way:
+
+```bash
+npm install dotenv dotenv-expand zod
+```
+
+This pulls in **3 packages**, totaling **8.3MB** in `node_modules` (see `full-tree.txt` for the actual `npm ls --all` output).
+
+envkit: **0 packages. 0MB. Fully readable in one sitting.**
+
 ## Testing
 
 ```bash

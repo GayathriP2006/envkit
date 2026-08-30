@@ -40,3 +40,46 @@ test('strips trailing inline comment on unquoted value', () => {
   const result = parseEnv('PORT=3000 # the port');
   assert.strictEqual(result.PORT, '3000');
 });
+test('handles = sign inside quoted value', () => {
+  const result = parseEnv('URL="http://example.com?a=1&b=2"');
+  assert.strictEqual(result.URL, 'http://example.com?a=1&b=2');
+});
+
+test('handles escaped double quotes inside quoted value', () => {
+  const result = parseEnv('MSG="She said \\"hello\\""');
+  assert.strictEqual(result.MSG, 'She said "hello"');
+});
+
+test('handles empty value', () => {
+  const result = parseEnv('EMPTY=');
+  assert.strictEqual(result.EMPTY, '');
+});
+
+test('handles empty quoted value', () => {
+  const result = parseEnv('EMPTY=""');
+  assert.strictEqual(result.EMPTY, '');
+});
+
+test('handles value with spaces when quoted', () => {
+  const result = parseEnv('NAME="John Doe"');
+  assert.strictEqual(result.NAME, 'John Doe');
+});
+
+test('handles key with underscores and numbers', () => {
+  const result = parseEnv('MY_VAR_2=test');
+  assert.strictEqual(result.MY_VAR_2, 'test');
+});
+
+test('ignores leading blank lines and trailing whitespace-only lines', () => {
+  const result = parseEnv('\n\n  \nPORT=3000\n   \n');
+  assert.strictEqual(result.PORT, '3000');
+});
+test('single-quoted values keep \\n literal, not expanded', () => {
+  const result = parseEnv("KEY='dontexpand\\nnewlines'");
+  assert.strictEqual(result.KEY, 'dontexpand\\nnewlines');
+});
+
+test('double-quoted values expand \\n into real newline', () => {
+  const result = parseEnv('KEY="expand\\nnewlines"');
+  assert.strictEqual(result.KEY, 'expand\nnewlines');
+});
