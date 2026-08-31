@@ -8,6 +8,9 @@ A zero-dependency replacement for `dotenv` + `dotenv-expand` + schema validation
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/GayathriP2006/envkit)
 
+## Live Demo
+Try it in your browser: **https://gayathrip2006.github.io/envkit/**
+
 ## The Problem
 
 Every Node.js project that uses `.env` files typically installs 3+ separate packages:
