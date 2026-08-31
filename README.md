@@ -6,6 +6,8 @@ A zero-dependency replacement for `dotenv` + `dotenv-expand` + schema validation
 
 ![Tests](https://github.com/GayathriP2006/envkit/actions/workflows/test.yml/badge.svg)
 
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/GayathriP2006/envkit)
+
 ## The Problem
 
 Every Node.js project that uses `.env` files typically installs 3+ separate packages:
@@ -21,6 +23,36 @@ Each of these packages pulls in its own dependency tree — code from strangers,
 - **Expands** `${VAR}` references between variables, with circular-reference detection
 - **Validates** your environment against a schema — required fields, types, defaults, enums, URLs
 - **Runs** your app only if validation passes, via a single CLI command
+
+## Installation
+
+Since envkit has zero dependencies, there's no npm registry package to install —
+you clone and link your own copy directly.
+
+```bash
+git clone https://github.com/GayathriP2006/envkit.git
+cd envkit
+npm link
+```
+
+This makes `envkit` available as a command anywhere on your machine, without
+downloading anything from the npm registry. `npm link` is part of npm itself —
+it just symlinks this folder so you can call it globally.
+
+Now use it in any project:
+
+```bash
+cd your-project
+envkit init
+envkit check
+envkit run -- node app.js
+```
+
+If you'd rather not install it globally, you can also run it directly:
+
+```bash
+node /path/to/envkit/bin/envkit.js check
+```
 
 ## How To Run It
 

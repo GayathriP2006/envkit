@@ -1,0 +1,10 @@
+{
+  "name": "envkit",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:24",
+  "postCreateCommand": "node bin/envkit.js init && echo 'PORT=3000\nAPI_KEY=abc123\nNODE_ENV=dev' > .env && npm test",
+  "customizations": {
+    "vscode": {
+      "extensions": []
+    }
+  }
+}
