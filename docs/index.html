@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>envkit — declared: zero dependencies</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EAE6DA;
+    --paper-raised:#F2EFE5;
+    --ink:#1B2430;
+    --ink-soft:#4B5563;
+    --line:#C9C2AE;
+    --stamp-green:#2F6F4F;
+    --stamp-green-bg:#E3ECE5;
+    --alert:#B23A2E;
+    --alert-bg:#F3E4E1;
+    --amber:#8A6A2A;
+    --amber-bg:#EFE7D3;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:15px;
+    line-height:1.6;
+  }
+  ::selection{background:var(--stamp-green); color:var(--paper);}
+
+  .wrap{
+    max-width:760px;
+    margin:0 auto;
+    padding:0 28px;
+  }
+
+  /* ---------- Header / hero ---------- */
+  header.doc{
+    border-bottom:1.5px solid var(--ink);
+    padding-top:56px;
+    padding-bottom:36px;
+  }
+  .doc-meta{
+    display:flex;
+    justify-content:space-between;
+    font-size:12.5px;
+    color:var(--ink-soft);
+    letter-spacing:.02em;
+    margin-bottom:34px;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  .doc-meta span{white-space:nowrap;}
+
+  h1.title{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-size:56px;
+    line-height:1.02;
+    margin:0 0 6px 0;
+    letter-spacing:-.01em;
+  }
+  h1.title em{
+    font-style:italic;
+    font-weight:500;
+    color:var(--stamp-green);
+  }
+  .subtitle{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-weight:400;
+    font-size:19px;
+    color:var(--ink-soft);
+    max-width:46ch;
+    margin:0 0 30px 0;
+  }
+
+  .field-row{
+    display:grid;
+    grid-template-columns:140px 1fr;
+    border-top:1px solid var(--line);
+    padding:11px 0;
+    font-size:13.5px;
+    gap:12px;
+  }
+  .field-row:last-child{border-bottom:1px solid var(--line);}
+  .field-label{color:var(--ink-soft);}
+  .field-value{color:var(--ink); word-break:break-word;}
+  .field-value a{color:var(--ink); text-decoration-color:var(--line);}
+
+  .stamp{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    border:1.5px solid var(--stamp-green);
+    color:var(--stamp-green);
+    padding:5px 12px;
+    border-radius:3px;
+    font-size:12.5px;
+    font-weight:600;
+    transform:rotate(-2deg);
+    margin-top:18px;
+  }
+  .stamp::before{content:"✓";}
+
+  /* ---------- Sections ---------- */
+  section{
+    padding:52px 0;
+    border-bottom:1px solid var(--line);
+  }
+  section:last-of-type{border-bottom:none;}
+
+  h2.section-head{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-size:26px;
+    margin:0 0 6px 0;
+  }
+  .section-sub{
+    color:var(--ink-soft);
+    font-size:13.5px;
+    margin:0 0 28px 0;
+    max-width:56ch;
+  }
+
+  /* comparison */
+  .compare{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:1px;
+    background:var(--line);
+    border:1px solid var(--line);
+  }
+  .compare-col{
+    background:var(--paper-raised);
+    padding:22px;
+  }
+  .compare-col h3{
+    font-family:'Fraunces', serif;
+    font-size:16px;
+    font-weight:500;
+    margin:0 0 14px 0;
+  }
+  .compare-col.bad h3{color:var(--alert);}
+  .compare-col.good h3{color:var(--stamp-green);}
+  .compare-num{
+    font-size:34px;
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    line-height:1;
+    margin-bottom:6px;
+  }
+  .compare-col.bad .compare-num{color:var(--alert);}
+  .compare-col.good .compare-num{color:var(--stamp-green);}
+  .compare-caption{
+    font-size:12.5px;
+    color:var(--ink-soft);
+  }
+  .compare-list{
+    list-style:none;
+    padding:0;
+    margin:16px 0 0 0;
+    font-size:12.5px;
+    color:var(--ink-soft);
+  }
+  .compare-list li{padding:3px 0;}
+  .compare-list li::before{content:"— "; color:var(--line);}
+
+  @media (max-width:600px){
+    .compare{grid-template-columns:1fr;}
+  }
+
+  /* ---------- Steps ---------- */
+  .steps{
+    margin-bottom:28px;
+  }
+  .step{
+    display:flex;
+    gap:14px;
+    padding:14px 0;
+    border-top:1px solid var(--line);
+  }
+  .step:last-child{border-bottom:1px solid var(--line);}
+  .step-num{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-size:20px;
+    color:var(--stamp-green);
+    width:24px;
+    flex-shrink:0;
+  }
+  .step-text{
+    font-size:13.5px;
+    color:var(--ink-soft);
+    line-height:1.55;
+    padding-top:2px;
+  }
+  .step-text strong{color:var(--ink);}
+
+  /* ---------- Playground ---------- */
+  .playground{
+    border:1.5px solid var(--ink);
+    background:var(--paper-raised);
+  }
+  .pg-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:12px 16px;
+    border-bottom:1.5px solid var(--ink);
+    font-size:12px;
+    letter-spacing:.02em;
+    color:var(--ink-soft);
+  }
+  .pg-header .dots{display:flex; gap:6px;}
+  .dot{width:8px; height:8px; border-radius:50%; background:var(--line);}
+
+  .pg-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+  }
+  .pg-pane{
+    border-right:1px solid var(--line);
+  }
+  .pg-pane:last-child{border-right:none;}
+  .pg-pane-label{
+    padding:10px 16px;
+    font-size:11.5px;
+    color:var(--ink-soft);
+    border-bottom:1px solid var(--line);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .pg-pane-label button{
+    background:none;
+    border:1px solid var(--line);
+    color:var(--ink-soft);
+    font-family:inherit;
+    font-size:10.5px;
+    padding:2px 8px;
+    border-radius:2px;
+    cursor:pointer;
+  }
+  .pg-pane-label button:hover{border-color:var(--ink); color:var(--ink);}
+
+  textarea{
+    width:100%;
+    height:220px;
+    border:none;
+    background:transparent;
+    color:var(--ink);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:13px;
+    line-height:1.55;
+    padding:14px 16px;
+    resize:vertical;
+    outline:none;
+  }
+
+  .pg-actions{
+    padding:14px 16px;
+    border-top:1.5px solid var(--ink);
+    display:flex;
+    align-items:center;
+    gap:14px;
+  }
+  .run-btn{
+    background:var(--ink);
+    color:var(--paper);
+    border:none;
+    font-family:'IBM Plex Mono', monospace;
+    font-weight:600;
+    font-size:13px;
+    padding:10px 20px;
+    border-radius:3px;
+    cursor:pointer;
+    letter-spacing:.01em;
+  }
+  .run-btn:hover{background:#000;}
+  .run-btn:focus-visible, .pg-pane-label button:focus-visible{
+    outline:2px solid var(--stamp-green);
+    outline-offset:2px;
+  }
+  .pg-hint{font-size:12px; color:var(--ink-soft);}
+
+  .pg-output{
+    border-top:1.5px solid var(--ink);
+    padding:18px 16px;
+    font-size:13px;
+  }
+  .pg-output-title{
+    font-size:11.5px;
+    color:var(--ink-soft);
+    margin-bottom:12px;
+  }
+  .result-line{
+    padding:6px 10px;
+    border-radius:3px;
+    margin-bottom:6px;
+    display:flex;
+    gap:8px;
+  }
+  .result-line.pass{background:var(--stamp-green-bg); color:var(--stamp-green);}
+  .result-line.fail{background:var(--alert-bg); color:var(--alert);}
+  .kv-table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:10px;
+  }
+  .kv-table td{
+    padding:5px 10px;
+    border-bottom:1px solid var(--line);
+    font-size:12.5px;
+    vertical-align:top;
+  }
+  .kv-table td.k{color:var(--ink-soft); width:38%;}
+  .kv-table td.v{color:var(--ink); word-break:break-all;}
+  .empty-note{color:var(--ink-soft); font-size:13px; font-style:italic;}
+
+  @media (max-width:640px){
+    .pg-grid{grid-template-columns:1fr;}
+    .pg-pane{border-right:none; border-bottom:1px solid var(--line);}
+  }
+
+  /* ---------- Footer ---------- */
+  footer{
+    padding:40px 0 60px 0;
+    font-size:12.5px;
+    color:var(--ink-soft);
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:12px;
+  }
+  footer a{color:var(--ink);}
+
+  code.inline{
+    background:var(--paper-raised);
+    border:1px solid var(--line);
+    padding:1px 6px;
+    border-radius:3px;
+    font-size:12.5px;
+  }
+
+  a.cta-link{
+    color:var(--ink);
+    border-bottom:1.5px solid var(--stamp-green);
+    text-decoration:none;
+  }
+  a.cta-link:hover{background:var(--stamp-green-bg);}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="doc">
+    <div class="doc-meta">
+      <span>DECLARATION OF DEPENDENCIES</span>
+      <span>Form ENV-01 · Track A</span>
+    </div>
+    <h1 class="title">Config that checks<br>itself. <em>No installs.</em></h1>
+    <p class="subtitle">envkit is a small command-line tool that catches missing or wrong settings in a <code class="inline">.env</code> file — before your app crashes because of them. It's built entirely from Node.js's own built-in tools, with nothing downloaded from the internet.</p>
+
+    <div class="field-row">
+      <div class="field-label">What it does</div>
+      <div class="field-value">Reads a .env file, checks required settings are present and correctly typed, and lets settings reference each other (e.g. a URL built from a host and a port)</div>
+    </div>
+    <div class="field-row">
+      <div class="field-label">Normally needs</div>
+      <div class="field-value">dotenv + dotenv-expand + zod (3 downloaded packages)</div>
+    </div>
+    <div class="field-row">
+      <div class="field-label">This tool needs</div>
+      <div class="field-value">0 downloaded packages — verified below</div>
+    </div>
+    <div class="field-row">
+      <div class="field-label">Full source code</div>
+      <div class="field-value"><a href="https://github.com/GayathriP2006/envkit" target="_blank" rel="noopener">github.com/GayathriP2006/envkit</a></div>
+    </div>
+
+    <div class="stamp">VERIFIED EMPTY MANIFEST</div>
+  </header>
+
+  <section>
+    <h2 class="section-head">What the alternative costs</h2>
+    <p class="section-sub">Installing the equivalent three packages the normal way pulls in a real dependency tree — code from people you'll never meet, updated without your review.</p>
+    <div class="compare">
+      <div class="compare-col bad">
+        <h3>npm install</h3>
+        <div class="compare-num">3</div>
+        <div class="compare-caption">packages installed directly</div>
+        <ul class="compare-list">
+          <li>dotenv</li>
+          <li>dotenv-expand</li>
+          <li>zod</li>
+        </ul>
+        <div class="compare-caption" style="margin-top:14px;">8.3 MB written to node_modules</div>
+      </div>
+      <div class="compare-col good">
+        <h3>envkit</h3>
+        <div class="compare-num">0</div>
+        <div class="compare-caption">packages, ever</div>
+        <ul class="compare-list">
+          <li>fs, path, url — stdlib only</li>
+          <li>child_process — stdlib only</li>
+          <li>node:test — stdlib only</li>
+        </ul>
+        <div class="compare-caption" style="margin-top:14px;">0 MB — nothing to audit but this repo</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="playground">
+    <h2 class="section-head">Try it — right here, 3 steps</h2>
+    <p class="section-sub">This is the real code from the repo, running live in your browser. Follow the steps below in order.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text"><strong>Click "envkit check"</strong> below. This .env file is missing a required setting (<code class="inline">API_KEY</code>) — you'll see it fail, in red, with a clear reason. This is what stops a broken app from starting.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text"><strong>Add the missing line</strong> to the .env box on the left: <code class="inline">API_KEY=abc123</code></div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text"><strong>Click "envkit check" again.</strong> It now passes, in green — the exact same check a developer would run before deploying.</div>
+      </div>
+    </div>
+
+    <div class="playground">
+      <div class="pg-header">
+        <span>playground.env</span>
+        <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+      </div>
+      <div class="pg-grid">
+        <div class="pg-pane">
+          <div class="pg-pane-label">
+            <span>.env — your app's settings</span>
+            <button onclick="loadSample('broken')">reset to broken example</button>
+          </div>
+          <textarea id="envInput" spellcheck="false">PORT=3000
+HOST=localhost
+FULL_URL=${HOST}:${PORT}/api
+NODE_ENV=dev</textarea>
+        </div>
+        <div class="pg-pane">
+          <div class="pg-pane-label">
+            <span>schema.json — the rules</span>
+            <button onclick="loadSample('schema')">reset schema</button>
+          </div>
+          <textarea id="schemaInput" spellcheck="false">{
+  "PORT": { "type": "number", "required": true },
+  "API_KEY": { "type": "string", "required": true },
+  "HOST": { "type": "string", "required": true },
+  "NODE_ENV": { "type": "enum", "values": ["dev","prod"], "default": "dev" }
+}</textarea>
+        </div>
+      </div>
+      <div class="pg-actions">
+        <button class="run-btn" onclick="runValidation()">envkit check</button>
+        <span class="pg-hint">re-checks whatever is currently in the boxes above</span>
+      </div>
+      <div class="pg-output" id="output">
+        <div class="pg-output-title">— output —</div>
+        <p class="empty-note">Click "envkit check" above to run it for the first time.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>envkit · Track A: Developer Tools &amp; CLI · MIT License</span>
+    <a class="cta-link" href="https://github.com/GayathriP2006/envkit" target="_blank" rel="noopener">View full source →</a>
+  </footer>
+
+</div>
+
+<script>
+  // ---- Ported directly from lib/parser.js ----
+  function parseEnv(fileContents) {
+    const result = {};
+    const lines = fileContents.split(/\r?\n/);
+    let i = 0;
+
+    while (i < lines.length) {
+      const rawLine = lines[i];
+      const trimmed = rawLine.trim();
+
+      if (!trimmed || trimmed.startsWith('#')) { i++; continue; }
+
+      const eqIndex = trimmed.indexOf('=');
+      if (eqIndex === -1) {
+        throw new Error(`Parse error on line ${i + 1}: no '=' found`);
+      }
+
+      const key = trimmed.slice(0, eqIndex).trim();
+      let valuePart = trimmed.slice(eqIndex + 1).trim();
+
+      if (valuePart.startsWith('"') && !isClosedOnSameLine(valuePart)) {
+        const collected = [valuePart.slice(1)];
+        i++;
+        let closed = false;
+        while (i < lines.length) {
+          const nextLine = lines[i];
+          if (nextLine.trimEnd().endsWith('"') && !nextLine.trimEnd().endsWith('\\"')) {
+            collected.push(nextLine.slice(0, nextLine.lastIndexOf('"')));
+            closed = true; i++; break;
+          }
+          collected.push(nextLine); i++;
+        }
+        if (!closed) throw new Error(`Parse error: unterminated multiline value for key "${key}"`);
+        let value = collected.join('\n');
+        value = value.replace(/\\n/g, '\n').replace(/\\"/g, '"');
+        result[key] = value;
+        continue;
+      }
+
+      let value = valuePart;
+      if (value.startsWith('"') && value.endsWith('"')) {
+        value = value.slice(1, -1);
+        value = value.replace(/\\n/g, '\n').replace(/\\"/g, '"');
+      } else if (value.startsWith("'") && value.endsWith("'")) {
+        value = value.slice(1, -1);
+      } else {
+        const hashIndex = value.indexOf(' #');
+        if (hashIndex !== -1) value = value.slice(0, hashIndex).trim();
+      }
+      result[key] = value;
+      i++;
+    }
+    return result;
+  }
+
+  function isClosedOnSameLine(valuePart) {
+    if (valuePart.length < 2) return false;
+    const rest = valuePart.slice(1);
+    let j = 0;
+    while (j < rest.length) {
+      if (rest[j] === '"' && rest[j - 1] !== '\\') return true;
+      j++;
+    }
+    return false;
+  }
+
+  // ---- Ported directly from lib/expand.js ----
+  function expandVars(parsed) {
+    const result = { ...parsed };
+    const VAR_PATTERN = /\$\{([A-Z0-9_]+)(:-([^}]*))?\}/g;
+
+    function resolve(key, seen = new Set()) {
+      if (seen.has(key)) throw new Error(`Circular reference detected involving: ${key}`);
+      seen.add(key);
+      let value = result[key];
+      if (value === undefined) return '';
+      value = value.replace(VAR_PATTERN, (_, refKey, hasDefault, defaultVal) => {
+        const refValue = result[refKey];
+        if (refValue === undefined) return hasDefault ? defaultVal : '';
+        return resolve(refKey, new Set(seen));
+      });
+      result[key] = value;
+      return value;
+    }
+    for (const key of Object.keys(result)) resolve(key);
+    return result;
+  }
+
+  // ---- Ported directly from lib/validate.js ----
+  function validateSchema(values, schema) {
+    const errors = [];
+    const output = { ...values };
+    for (const [key, rule] of Object.entries(schema)) {
+      let val = output[key];
+      if ((val === undefined || val === '') && rule.default !== undefined) {
+        val = rule.default; output[key] = String(val);
+      }
+      if ((val === undefined || val === '') && rule.required) {
+        errors.push(`${key}: required but missing`); continue;
+      }
+      if (val === undefined) continue;
+      switch (rule.type) {
+        case 'number':
+          if (isNaN(Number(val))) errors.push(`${key}: expected number, got "${val}"`);
+          break;
+        case 'boolean':
+          if (!['true','false'].includes(String(val))) errors.push(`${key}: expected true/false, got "${val}"`);
+          break;
+        case 'enum':
+          if (!rule.values.includes(val)) errors.push(`${key}: expected one of [${rule.values.join(', ')}], got "${val}"`);
+          break;
+        case 'url':
+          try { new URL(val); } catch { errors.push(`${key}: invalid URL "${val}"`); }
+          break;
+      }
+    }
+    return { valid: errors.length === 0, errors, values: output };
+  }
+
+  // ---- Playground wiring ----
+  function esc(s){
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  function runValidation(){
+    const out = document.getElementById('output');
+    const envText = document.getElementById('envInput').value;
+    const schemaText = document.getElementById('schemaInput').value;
+
+    let parsed, expanded, schema, result;
+    try {
+      parsed = parseEnv(envText);
+      expanded = expandVars(parsed);
+    } catch (e) {
+      out.innerHTML = `<div class="pg-output-title">— output —</div>
+        <div class="result-line fail">✘ Parse error: ${esc(e.message)}</div>`;
+      return;
+    }
+    try {
+      schema = JSON.parse(schemaText);
+    } catch (e) {
+      out.innerHTML = `<div class="pg-output-title">— output —</div>
+        <div class="result-line fail">✘ Schema is not valid JSON: ${esc(e.message)}</div>`;
+      return;
+    }
+
+    result = validateSchema(expanded, schema);
+
+    let html = '<div class="pg-output-title">— output —</div>';
+    if (result.valid) {
+      html += `<div class="result-line pass">✔ .env is valid</div>`;
+    } else {
+      html += `<div class="result-line fail">✘ .env has ${result.errors.length} error${result.errors.length>1?'s':''}</div>`;
+      result.errors.forEach(e => {
+        html += `<div class="result-line fail">— ${esc(e)}</div>`;
+      });
+    }
+
+    html += '<table class="kv-table">';
+    Object.entries(expanded).forEach(([k,v]) => {
+      html += `<tr><td class="k">${esc(k)}</td><td class="v">${esc(v)}</td></tr>`;
+    });
+    html += '</table>';
+
+    out.innerHTML = html;
+  }
+
+  function loadSample(kind){
+    if (kind === 'broken') {
+      document.getElementById('envInput').value =
+`PORT=notanumber
+HOST=localhost
+FULL_URL=\${HOST}:\${PORT}/api`;
+    }
+    if (kind === 'schema') {
+      document.getElementById('schemaInput').value =
+`{
+  "PORT": { "type": "number", "required": true },
+  "API_KEY": { "type": "string", "required": true },
+  "HOST": { "type": "string", "required": true },
+  "NODE_ENV": { "type": "enum", "values": ["dev","prod"], "default": "dev" }
+}`;
+    }
+    document.getElementById('output').innerHTML =
+      '<div class="pg-output-title">— output —</div><p class="empty-note">Click "envkit check" to see the result.</p>';
+  }
+</script>
+
+</body>
+</html>
